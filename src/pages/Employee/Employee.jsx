@@ -402,7 +402,7 @@ function Employee() {
 
     }
 
-    const columnCount = 6;
+    const columnCount = 5;
 
     return (
 
@@ -446,16 +446,6 @@ function Employee() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: "bold" }}>
-                                <TableSortLabel
-                                    active={sortBy === "empId"}
-                                    direction={sortBy === "empId" ? direction : "asc"}
-                                    onClick={() => handleSort("empId")}
-                                    disabled={isSearchMode}
-                                >
-                                    ID
-                                </TableSortLabel>
-                            </TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>
                                 <TableSortLabel
                                     active={sortBy === "empName"}
@@ -510,7 +500,6 @@ function Employee() {
                         ) : (
                             employees.map((emp) => (
                                 <TableRow key={emp.empId} hover>
-                                    <TableCell>{emp.empId}</TableCell>
                                     <TableCell>{emp.empName}</TableCell>
                                     <TableCell>{emp.departmentName}</TableCell>
                                     <TableCell>{emp.empJoiningDate}</TableCell>

@@ -6,6 +6,8 @@ import Department from "../pages/Department/Department";
 import DepartmentDetails from "../pages/Department/DepartmentDetails";
 import Employee from "../pages/Employee/Employee";
 import NotFound from "../pages/NotFound/NotFound";
+import DepartmentAuditPage from "../pages/Audit/DepartmentAuditPage";
+import EmployeeAuditPage from "../pages/Audit/EmployeeAuditPage";
 
 import DashboardLayout from "../layouts/DashboardLayout";
 import ProtectedRoute from "./ProtectedRoute";
@@ -33,6 +35,10 @@ function AppRoutes() {
                         <Route path="/departments/:deptId" element={<DepartmentDetails />} />
 
                         <Route path="/employees" element={<Employee />} />
+
+                        <Route path="/department/audit" element={<DepartmentAuditPage />} />
+
+                        <Route path="/emp/audit" element={<EmployeeAuditPage />} />
 
                     </Route>
 

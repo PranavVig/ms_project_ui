@@ -309,7 +309,7 @@ function Department() {
 
     }
 
-    const columnCount = 3;
+    const columnCount = 2;
 
     return (
 
@@ -353,16 +353,6 @@ function Department() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: "bold" }}>
-                                <TableSortLabel
-                                    active={sortBy === "deptId"}
-                                    direction={sortBy === "deptId" ? direction : "asc"}
-                                    onClick={() => handleSort("deptId")}
-                                    disabled={isSearchMode}
-                                >
-                                    Department ID
-                                </TableSortLabel>
-                            </TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>
                                 <TableSortLabel
                                     active={sortBy === "deptName"}
@@ -410,7 +400,6 @@ function Department() {
                                     sx={{ cursor: "pointer" }}
                                     onClick={() => handleRowClick(dept.deptId)}
                                 >
-                                    <TableCell>{dept.deptId}</TableCell>
                                     <TableCell>{dept.deptName}</TableCell>
                                     <TableCell align="right">
                                         <Tooltip title="Edit">

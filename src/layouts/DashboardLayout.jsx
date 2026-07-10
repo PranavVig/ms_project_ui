@@ -1,24 +1,54 @@
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import { Outlet } from "react-router-dom";
 
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { Outlet } from "react-router-dom";
 
 function DashboardLayout() {
 
     return (
 
-        <Box>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                bgcolor: "background.default",
+            }}
+        >
 
             <Navbar />
 
-            <Box sx={{ display: "flex" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    minHeight: "calc(100vh - 72px)",
+                }}
+            >
 
                 <Sidebar />
 
-                <Box sx={{ padding: 3, flexGrow: 1 }}>
+                <Box
+                    component="main"
+                    sx={{
+                        flexGrow: 1,
+                        overflow: "auto",
+                    }}
+                >
 
-                    <Outlet />
+                    <Container
+                        maxWidth="xl"
+                        sx={{
+                            py: 4,
+                            px: {
+                                xs: 2,
+                                sm: 3,
+                                md: 4,
+                            },
+                        }}
+                    >
+
+                        <Outlet />
+
+                    </Container>
 
                 </Box>
 

@@ -167,16 +167,35 @@ function Department() {
 
     function handleSearch() {
 
+
+
         if (!searchInput.trim()) {
-            setIsSearchMode(false);
-            setPage(0);
+        
+            handleClearSearch();
+        
             return;
+        
+        } 
+        
+        
+        
+            setPage(0);
+        
+        
+        
+            if (isSearchMode) {
+        
+                fetchSearchResults();
+        
+            } else {
+        
+                setIsSearchMode(true);
+        
+            }
+        
+        
+        
         }
-
-        setIsSearchMode(true);
-        setPage(0);
-
-    }
 
     function handleClearSearch() {
 
@@ -315,13 +334,62 @@ function Department() {
 
         <Box>
 
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-                Departments
-            </Typography>
+<Paper
+    sx={{
+        mb: 4,
+        p: 4,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 3,
+    }}
+>
 
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
-                Manage departments in your organization.
-            </Typography>
+    <Box>
+
+        <Typography
+            variant="overline"
+            color="primary"
+            sx={{
+                fontWeight: 700,
+                letterSpacing: 2,
+            }}
+        >
+            MANAGEMENT
+        </Typography>
+
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 0.5,
+                fontWeight: 700,
+            }}
+        >
+            Departments
+        </Typography>
+
+        <Typography
+            color="text.secondary"
+            sx={{
+                mt: 1,
+                maxWidth: 550,
+            }}
+        >
+            Organize departments across your organisation.
+        </Typography>
+
+    </Box>
+
+    <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={handleOpenAddDialog}
+    >
+        Add Department
+    </Button>
+
+</Paper>
 
             <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
                 <TextField
@@ -349,10 +417,23 @@ function Department() {
                 )}
             </Box>
 
-            <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3 }}>
+            <TableContainer
+    component={Paper}
+    elevation={0}
+    sx={{
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+        overflow: "hidden",
+    }}
+>
                 <Table>
                     <TableHead>
-                        <TableRow>
+                    <TableRow
+    sx={{
+        bgcolor: "action.hover",
+    }}
+>
                             <TableCell sx={{ fontWeight: "bold" }}>
                                 <TableSortLabel
                                     active={sortBy === "deptName"}
@@ -371,13 +452,21 @@ function Department() {
 
                     <TableBody>
                         {loading ? (
-                            <TableRow>
+                          <TableRow
+                          sx={{
+                              bgcolor: "action.hover",
+                          }}
+                      >
                                 <TableCell colSpan={columnCount} align="center" sx={{ py: 8 }}>
                                     <CircularProgress size={36} />
                                 </TableCell>
                             </TableRow>
                         ) : departments.length === 0 ? (
-                            <TableRow>
+                            <TableRow
+                            sx={{
+                                bgcolor: "action.hover",
+                            }}
+                        >
                                 <TableCell colSpan={columnCount} align="center" sx={{ py: 8 }}>
                                     <BusinessOutlinedIcon
                                         sx={{ fontSize: 48, color: "text.disabled", mb: 1 }}
@@ -395,25 +484,43 @@ function Department() {
                         ) : (
                             departments.map((dept) => (
                                 <TableRow
-                                    key={dept.deptId}
-                                    hover
-                                    sx={{ cursor: "pointer" }}
+                                key={dept.deptId}
+                                hover
+                                sx={{
+                                    cursor: "pointer",
+                                    transition: "background-color .2s ease",
+                            
+                                    "& td": {
+                                        py: 2,
+                                    },
+                            
+                                    "&:hover": {
+                                        bgcolor: "action.hover",
+                                    },
+                                }}
                                     onClick={() => handleRowClick(dept.deptId)}
                                 >
                                     <TableCell>{dept.deptName}</TableCell>
                                     <TableCell align="right">
                                         <Tooltip title="Edit">
-                                            <IconButton
-                                                size="small"
+                                        <IconButton
+    size="small"
+    sx={{
+        borderRadius: 2,
+        mr: 0.5,
+    }}
                                                 onClick={(e) => handleOpenEditDialog(dept, e)}
                                             >
                                                 <EditOutlinedIcon fontSize="small" />
                                             </IconButton>
                                         </Tooltip>
                                         <Tooltip title="Delete">
-                                            <IconButton
-                                                size="small"
-                                                color="error"
+                                        <IconButton
+    size="small"
+    color="error"
+    sx={{
+        borderRadius: 2,
+    }}
                                                 onClick={(e) => handleOpenDeleteDialog(dept, e)}
                                             >
                                                 <DeleteOutlineOutlinedIcon fontSize="small" />
@@ -438,17 +545,15 @@ function Department() {
                 </Box>
             )}
 
-            <Fab
-                color="primary"
-                aria-label="add department"
-                sx={{ position: "fixed", bottom: 32, right: 32 }}
-                onClick={handleOpenAddDialog}
-            >
-                <AddIcon />
-            </Fab>
+
 
             <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-                <DialogTitle>
+            <DialogTitle
+    sx={{
+        fontWeight: 700,
+        pb: 1,
+    }}
+>
                     {dialogMode === "add" ? "Add Department" : "Edit Department"}
                 </DialogTitle>
                 <DialogContent>
@@ -477,12 +582,39 @@ function Department() {
             </Dialog>
 
             <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-                <DialogTitle>Delete Department</DialogTitle>
+            <DialogTitle
+    sx={{
+        fontWeight: 700,
+        pb: 1,
+    }}
+>Delete Department</DialogTitle>
                 <DialogContent>
-                    <Typography>
-                        Are you sure you want to delete{" "}
-                        <strong>{deptToDelete?.deptName}</strong>?
-                    </Typography>
+                <Box>
+
+<Typography
+    color="text.secondary"
+    sx={{ mb: 2 }}
+>
+    This action cannot be undone.
+</Typography>
+
+<Paper
+    variant="outlined"
+    sx={{
+        p: 2,
+        borderRadius: 2,
+    }}
+>
+    <Typography variant="subtitle2">
+        Department
+    </Typography>
+
+    <Typography fontWeight={600}>
+        {deptToDelete?.deptName}
+    </Typography>
+</Paper>
+
+</Box>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>
                     <Button onClick={handleCloseDeleteDialog}>Cancel</Button>

@@ -1,14 +1,27 @@
 import { useEffect, useState } from "react";
 import {
-  Box,
-  CircularProgress,
-  Grid,
-  Paper,
-  Typography
+    Box,
+    Button,
+    CircularProgress,
+    Grid,
+    Paper,
+    Stack,
+    Typography,
 } from "@mui/material";
+
+import { motion } from "framer-motion";
+import {
+    ArrowRight,
+    Building2,
+    Users,
+} from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
 function Dashboard() {
+
+    const navigate = useNavigate();
 
     const [deptCount, setDeptCount] = useState(0);
     const [empCount, setEmpCount] = useState(0);
@@ -27,8 +40,18 @@ function Dashboard() {
         try {
 
             const [deptRes, empRes] = await Promise.all([
-                api.get("/department", { params: { page: 0, size: 1 } }),
-                api.get("/emp", { params: { page: 0, size: 1 } })
+                api.get("/department", {
+                    params: {
+                        page: 0,
+                        size: 1,
+                    },
+                }),
+                api.get("/emp", {
+                    params: {
+                        page: 0,
+                        size: 1,
+                    },
+                }),
             ]);
 
             setDeptCount(deptRes.data.totalElements);
@@ -47,99 +70,292 @@ function Dashboard() {
     }
 
     return (
-      <Box>
 
-      <Typography
-          variant="h4"
-          fontWeight="bold"
-          gutterBottom
-      >
-          Dashboard
-      </Typography>
+        <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+        >
+<Box>
+<Paper
+    sx={{
+        mb: 4,
+        p: 4,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 3,
+    }}
+>
 
-      <Typography
-          color="text.secondary"
-          sx={{ mb: 4 }}
-      >
-          Welcome back! Here's an overview of your Employee Management System.
-      </Typography>
+    <Box>
 
-      <Grid container spacing={3}>
+        <Typography
+            variant="overline"
+            color="primary"
+            sx={{
+                fontWeight: 700,
+                letterSpacing: 2,
+            }}
+        >
+            OVERVIEW
+        </Typography>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 0.5,
+                fontWeight: 700,
+            }}
+        >
+            Dashboard
+        </Typography>
 
-              <Paper
-                  elevation={2}
-                  sx={{
-                      p: 3,
-                      borderRadius: 3
-                  }}
-              >
-                  <Typography variant="h6">
-                      Departments
-                  </Typography>
+        <Typography
+            color="text.secondary"
+            sx={{
+                mt: 1,
+                maxWidth: 550,
+            }}
+        >
+            Monitor departments, employees and audit activity from a single place.
+        </Typography>
 
-                  <Typography
-                      variant="h3"
-                      sx={{ mt: 2 }}
-                  >
-                      {loading ? <CircularProgress size={32} /> : deptCount}
-                  </Typography>
+    </Box>
 
-              </Paper>
+    <Button
+        variant="contained"
+        onClick={fetchCounts}
+    >
+        Refresh Data
+    </Button>
 
-          </Grid>
+</Paper>
 
-          <Grid size={{ xs: 12, md: 6 }}>
+    
 
-              <Paper
-                  elevation={2}
-                  sx={{
-                      p: 3,
-                      borderRadius: 3
-                  }}
-              >
-                  <Typography variant="h6">
-                      Employees
-                  </Typography>
+                <Grid container spacing={3}>                    <Grid size={{ xs: 12, md: 6 }}>
 
-                  <Typography
-                      variant="h3"
-                      sx={{ mt: 2 }}
-                  >
-                      {loading ? <CircularProgress size={32} /> : empCount}
-                  </Typography>
+<motion.div
+    whileHover={{
+        y: -4,
+    }}
+    transition={{
+        duration: 0.2,
+    }}
+    style={{ height: "100%" }}
+>
 
-              </Paper>
+    <Paper
+        sx={{
+            p: 3,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+        }}
+    >
 
-          </Grid>
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+        >
 
-      </Grid>
+            <Typography
+                variant="subtitle1"
+                fontWeight={600}
+            >
+                Departments
+            </Typography>
+            <Building2
+                size={22}
+                strokeWidth={1}
+            />
+        
 
-      <Paper
-          elevation={2}
-          sx={{
-              mt: 4,
-              p: 3,
-              borderRadius: 3
-          }}
-      >
+        </Stack>
 
-          <Typography
-              variant="h6"
-              gutterBottom
-          >
-              Quick Actions
-          </Typography>
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 4,
+                mb: 1,
+            }}
+        >
+            {loading ? (
+                <CircularProgress size={32} />
+            ) : (
+                deptCount
+            )}
+        </Typography>
 
-          <Typography color="text.secondary">
-              Use the sidebar to manage Departments and Employees.
-          </Typography>
+        <Typography
+            variant="body2"
+            color="text.secondary"
+        >
+            Active Departments
+        </Typography>
 
-      </Paper>
+    </Paper>
 
-  </Box>
-    );
+</motion.div>
+
+</Grid>
+
+<Grid size={{ xs: 12, md: 6 }}>
+
+<motion.div
+    whileHover={{
+        y: -4,
+    }}
+    transition={{
+        duration: 0.2,
+    }}
+    style={{ height: "100%" }}
+>
+
+    <Paper
+        sx={{
+            p: 3,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+        }}
+    >
+
+        <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+        >
+           
+            <Typography
+                variant="subtitle1"
+                fontWeight={600}
+            >
+                Employees
+            </Typography>
+            <Users
+                size={22}
+                strokeWidth={1}
+            />
+
+
+        </Stack>
+
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 4,
+                mb: 1,
+            }}
+        >
+            {loading ? (
+                <CircularProgress size={32} />
+            ) : (
+                empCount
+            )}
+        </Typography>
+
+        <Typography
+            variant="body2"
+            color="text.secondary"
+        >
+            Registered Employees
+        </Typography>
+
+    </Paper>
+
+</motion.div>
+
+</Grid>
+
+</Grid>
+
+<Paper
+sx={{
+mt: 4,
+p: 3,
+}}
+>                    <Typography
+                        variant="h6"
+                        fontWeight={600}
+                    >
+                        Quick Actions
+                    </Typography>
+
+                    <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                            mt: 1,
+                            mb: 3,
+                        }}
+                    >
+                        Access the most frequently used management modules.
+                    </Typography>
+
+                    <Grid container spacing={2}>
+
+                        <Grid size={{ xs: 12, md: 4 }}>
+
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                endIcon={<ArrowRight size={18} />}
+                                onClick={() => navigate("/departments")}
+                                sx={{
+                                    py: 1.3,
+                                }}
+                            >
+                                Manage Departments
+                            </Button>
+
+                        </Grid>
+
+                        <Grid size={{ xs: 12, md: 4 }}>
+
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                endIcon={<ArrowRight size={18} />}
+                                onClick={() => navigate("/employees")}
+                                sx={{
+                                    py: 1.3,
+                                }}
+                            >
+                                Manage Employees
+                            </Button>
+
+                        </Grid>
+
+                        <Grid size={{ xs: 12, md: 4 }}>
+
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                endIcon={<ArrowRight size={18} />}
+                                onClick={() => navigate("/department/audit")}
+                                sx={{
+                                    py: 1.3,
+                                }}
+                            >
+                                View Audit Logs
+                            </Button>
+
+                        </Grid>
+
+                    </Grid>
+
+                </Paper>
+                </Box>
+
+</motion.div>
+
+);
 }
 
 export default Dashboard;

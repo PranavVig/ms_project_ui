@@ -7,6 +7,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { ThemeModeProvider, useThemeMode } from "./theme/ThemeModeContext";
 import { createAppTheme } from "./theme/theme";
+import { SidebarProvider } from "./context/SidebarContext";
 
 function ThemedApp() {
 
@@ -24,8 +25,10 @@ function ThemedApp() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <ThemeModeProvider>
-            <ThemedApp />
-        </ThemeModeProvider>
+<ThemeModeProvider>
+    <SidebarProvider>
+        <ThemedApp />
+    </SidebarProvider>
+</ThemeModeProvider>
     </React.StrictMode>
 );

@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSidebar } from "../context/SidebarContext";
+
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import {
     AppBar,
     Box,
@@ -20,6 +23,7 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import api from "../services/api";
 import { useThemeMode } from "../theme/ThemeModeContext";
+
 
 function highlightMatch(text, keyword) {
 
@@ -52,6 +56,7 @@ function highlightMatch(text, keyword) {
 function Navbar() {
 
     const navigate = useNavigate();
+    const { toggleSidebar } = useSidebar();
     const { mode, toggleTheme } = useThemeMode();
     const searchRef = useRef(null);
 
@@ -136,9 +141,25 @@ function Navbar() {
 
     return (
 
-        <AppBar position="static" elevation={1} color="inherit">
+        <AppBar
+        position="sticky"
+        color="inherit"
+        elevation={0}
+        sx={{
+            borderBottom: "1px solid",
+            borderColor: "divider",
+            backdropFilter: "blur(12px)",
+            bgcolor: "background.paper",
+        }}
+    >
 
-            <Toolbar sx={{ gap: 2 }}>
+<Toolbar
+    sx={{
+        minHeight: 72,
+        gap: 3,
+        px: 3,
+    }}
+>
 
                 <Typography variant="h6" fontWeight="bold" sx={{ flexShrink: 0 }}>
                     Employee Management Portal
@@ -205,7 +226,12 @@ function Navbar() {
                 </Box>
 
                 <Tooltip title={mode === "light" ? "Dark mode" : "Light mode"}>
-                    <IconButton onClick={toggleTheme} aria-label="toggle theme">
+                <IconButton
+    sx={{
+        border: "1px solid",
+        borderColor: "divider",
+        ml: -2,
+    }} onClick={toggleTheme} aria-label="toggle theme">
                         {mode === "light" ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
                     </IconButton>
                 </Tooltip>

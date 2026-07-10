@@ -218,18 +218,35 @@ function Employee() {
 
     function handleSearch() {
 
+
+
         if (!searchInput.trim()) {
-            setIsSearchMode(false);
-            setPage(0);
-            setSearchParams({});
+        
+            handleClearSearch();
+        
             return;
+        
+        } 
+        
+        
+        
+            setPage(0);
+        
+        
+        
+            if (isSearchMode) {
+        
+                fetchSearchResults();
+        
+            } else {
+        
+                setIsSearchMode(true);
+        
+            }
+        
+        
+        
         }
-
-        setIsSearchMode(true);
-        setPage(0);
-        setSearchParams({ search: searchInput.trim() });
-
-    }
 
     function handleClearSearch() {
 
@@ -402,19 +419,68 @@ function Employee() {
 
     }
 
-    const columnCount = 5;
+    const columnCount = 4;
 
     return (
 
         <Box>
 
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-                Employees
-            </Typography>
+<Paper
+    sx={{
+        mb: 4,
+        p: 4,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 3,
+    }}
+>
 
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
-                Manage employees and their department assignments.
-            </Typography>
+    <Box>
+
+        <Typography
+            variant="overline"
+            color="primary"
+            sx={{
+                fontWeight: 700,
+                letterSpacing: 2,
+            }}
+        >
+            MANAGEMENT
+        </Typography>
+
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 0.5,
+                fontWeight: 700,
+            }}
+        >
+            Employees
+        </Typography>
+
+        <Typography
+            color="text.secondary"
+            sx={{
+                mt: 1,
+                maxWidth: 550,
+            }}
+        >
+            Manage employees, department assignments and workforce information.
+        </Typography>
+
+    </Box>
+
+    <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={handleOpenAddDialog}
+    >
+        Add Employee
+    </Button>
+
+</Paper>
 
             <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
                 <TextField
@@ -442,10 +508,23 @@ function Employee() {
                 )}
             </Box>
 
-            <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3 }}>
+            <TableContainer
+    component={Paper}
+    elevation={0}
+    sx={{
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+        overflow: "hidden",
+    }}
+>
                 <Table>
                     <TableHead>
-                        <TableRow>
+                    <TableRow
+    sx={{
+        bgcolor: "action.hover",
+    }}
+>
                             <TableCell sx={{ fontWeight: "bold" }}>
                                 <TableSortLabel
                                     active={sortBy === "empName"}
@@ -499,7 +578,21 @@ function Employee() {
                             </TableRow>
                         ) : (
                             employees.map((emp) => (
-                                <TableRow key={emp.empId} hover>
+                                <TableRow
+                                key={emp.empId}
+                                hover
+                                sx={{
+                                    transition: "background-color .2s ease",
+                            
+                                    "& td": {
+                                        py: 2,
+                                    },
+                            
+                                    "&:hover": {
+                                        bgcolor: "action.hover",
+                                    },
+                                }}
+                            >
                                     <TableCell>{emp.empName}</TableCell>
                                     <TableCell>{emp.departmentName}</TableCell>
                                     <TableCell>{emp.empJoiningDate}</TableCell>
@@ -531,7 +624,13 @@ function Employee() {
             </TableContainer>
 
             {!isSearchMode && totalPages > 1 && (
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+            <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 4,
+            }}
+        >
                     <Pagination
                         count={totalPages}
                         page={page + 1}
@@ -541,17 +640,14 @@ function Employee() {
                 </Box>
             )}
 
-            <Fab
-                color="primary"
-                aria-label="add employee"
-                sx={{ position: "fixed", bottom: 32, right: 32 }}
-                onClick={handleOpenAddDialog}
-            >
-                <AddIcon />
-            </Fab>
 
             <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
-                <DialogTitle>
+            <DialogTitle
+    sx={{
+        fontWeight: 700,
+        pb: 1,
+    }}
+>
                     {dialogMode === "add" ? "Add Employee" : "Edit Employee"}
                 </DialogTitle>
                 <DialogContent>
@@ -618,12 +714,47 @@ function Employee() {
             </Dialog>
 
             <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
-                <DialogTitle>Delete Employee</DialogTitle>
+            <DialogTitle
+    sx={{
+        fontWeight: 700,
+        pb: 1,
+    }}
+>Delete Employee</DialogTitle>
                 <DialogContent>
-                    <Typography>
-                        Are you sure you want to delete{" "}
-                        <strong>{empToDelete?.empName}</strong>?
-                    </Typography>
+                <Box>
+
+<Typography
+    color="text.secondary"
+    sx={{ mb: 2 }}
+>
+    This action cannot be undone.
+</Typography>
+
+<Paper
+    variant="outlined"
+    sx={{
+        p: 2,
+        borderRadius: 2,
+    }}
+>
+    <Typography variant="subtitle2">
+        Employee
+    </Typography>
+
+    <Typography fontWeight={600}>
+        {empToDelete?.empName}
+    </Typography>
+
+    <Typography
+        variant="body2"
+        color="text.secondary"
+    >
+        {empToDelete?.departmentName}
+    </Typography>
+
+</Paper>
+
+</Box>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 2 }}>
                     <Button onClick={handleCloseDeleteDialog}>Cancel</Button>

@@ -60,13 +60,30 @@ function renderValue(val) {
 }
 
 function FieldDiff({ oldData, newData, action, rawRecord }) {
-    const keys = Array.from(
-        new Set([
-            ...Object.keys(oldData || {}),
-            ...Object.keys(newData || {})
-        ])
-    ).filter((k) => !HIDDEN_KEYS.has(k));
+    let keys = [];
 
+if (action === "UPDATE") {
+
+    keys = Object.keys({
+        ...oldData,
+        ...newData,
+    })
+        .filter((key) => key.startsWith("old"))
+        .filter((key) => !HIDDEN_KEYS.has(key));
+
+} else if (action === "CREATE") {
+
+    keys = Object.keys(newData || {})
+        .filter((key) => key.startsWith("new"))
+        .filter((key) => !HIDDEN_KEYS.has(key));
+
+} else if (action === "DELETE") {
+
+    keys = Object.keys(oldData || {})
+        .filter((key) => key.startsWith("old"))
+        .filter((key) => !HIDDEN_KEYS.has(key));
+
+}
     if (keys.length === 0) {
         return (
             <Box>
@@ -80,14 +97,47 @@ function FieldDiff({ oldData, newData, action, rawRecord }) {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
-            {keys.map((key) => {
-                const oldVal = oldData?.[key];
-                const newVal = newData?.[key];
-                const changed = action === "UPDATE" && String(oldVal ?? "") !== String(newVal ?? "");
+{keys.map((key) => {
 
+let label;
+let oldVal;
+let newVal;
+
+if (action === "UPDATE") {
+
+    const suffix = key.substring(3);
+
+    label = suffix.replace(/([A-Z])/g, " $1").trim();
+
+    oldVal = oldData?.[key];
+    newVal = newData?.["new" + suffix];
+
+} else if (action === "CREATE") {
+
+    const suffix = key.substring(3);
+
+    label = suffix.replace(/([A-Z])/g, " $1").trim();
+
+    oldVal = null;
+    newVal = newData?.[key];
+
+} else {
+
+    const suffix = key.substring(3);
+
+    label = suffix.replace(/([A-Z])/g, " $1").trim();
+
+    oldVal = oldData?.[key];
+    newVal = null;
+
+}
+
+const changed =
+    action !== "UPDATE" ||
+    String(oldVal ?? "") !== String(newVal ?? "");
                 return (
                     <Box
-                        key={key}
+                        key={label}
                         sx={{
                             display: "flex",
                             alignItems: "center",
@@ -99,12 +149,12 @@ function FieldDiff({ oldData, newData, action, rawRecord }) {
                             variant="caption"
                             sx={{
                                 fontWeight: 600,
-                                minWidth: 120,
+                                minWidth: 140,
                                 color: "text.secondary",
                                 textTransform: "capitalize"
                             }}
                         >
-                            {key.replace(/([A-Z])/g, " $1").trim()}
+                            {label}
                         </Typography>
 
                         {action === "CREATE" && (
@@ -225,6 +275,24 @@ function DepartmentAuditPage() {
         let newData = parseJsonSafe(rawNew);
 
         if (!oldData && !newData) {
+            if (action.includes("UPD")) {
+
+                oldData = {};
+                newData = {};
+            
+                Object.keys(record).forEach((key) => {
+            
+                    if (key.startsWith("old")) {
+                        oldData[key] = record[key];
+                    }
+            
+                    if (key.startsWith("new")) {
+                        newData[key] = record[key];
+                    }
+            
+                });
+            
+            }
             const knownKeys = new Set(["action", "actionType", "operationType", "operation", "type", "eventType", "revType", "timestamp", "createdAt", "auditTimestamp", "changedAt", "modifiedAt", "dateTime", "date", "time", "createdDate", "revtstmp", "performedBy", "changedBy", "modifiedBy", "updatedBy", "username", "user", "actor", "auditId", "id", "audit_id", "rev"]);
             const flatData = {};
             for (const k in record) {
@@ -256,30 +324,77 @@ function DepartmentAuditPage() {
     return (
         <Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.5 }}>
-                <AssignmentOutlinedIcon color="action" />
-                <Typography variant="h4" fontWeight="bold">
-                    Department Audit
-                </Typography>
-            </Box>
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
-                Track all create, update, and delete operations on departments.
-            </Typography>
+<Paper
+    sx={{
+        mb: 4,
+        p: 4,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 3,
+    }}
+>
 
+    <Box>
+
+        <Typography
+            variant="overline"
+            color="primary"
+            sx={{
+                fontWeight: 700,
+                letterSpacing: 2,
+            }}
+        >
+            AUDIT LOGS
+        </Typography>
+
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 0.5,
+                fontWeight: 700,
+            }}
+        >
+            Department Audit
+        </Typography>
+
+        <Typography
+            color="text.secondary"
+            sx={{
+                mt: 1,
+                maxWidth: 560,
+            }}
+        >
+            Review every department creation, update and deletion across the system.
+        </Typography>
+
+    </Box>
+
+</Paper>
             {error && (
                 <Alert severity="error" sx={{ mb: 3 }}>
                     {error}
                 </Alert>
             )}
 
-            <TableContainer
-                component={Paper}
-                elevation={2}
-                sx={{ borderRadius: 3 }}
-            >
+<TableContainer
+component={Paper}
+elevation={0}
+sx={{
+borderRadius:2,
+border:"1px solid",
+borderColor:"divider",
+overflow:"hidden",
+}}
+>
                 <Table>
                     <TableHead>
-                        <TableRow>
+                    <TableRow
+sx={{
+bgcolor:"action.hover",
+}}
+>
                             <TableCell sx={{ fontWeight: "bold", width: 110 }}>Action</TableCell>
                             <TableCell sx={{ fontWeight: "bold", width: 190 }}>Timestamp</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Changes</TableCell>
@@ -320,19 +435,40 @@ function DepartmentAuditPage() {
                                     >
                                         <TableCell>
                                             <Tooltip title={actionCfg.label}>
-                                                <Chip
-                                                    label={actionCfg.label}
-                                                    color={actionCfg.color}
-                                                    size="small"
-                                                    sx={{ fontWeight: 700, minWidth: 72 }}
-                                                />
+                                            <Chip
+    label={actionCfg.label}
+    color={actionCfg.color}
+    size="small"
+    sx={{
+        fontWeight: 700,
+        minWidth: 82,
+        borderRadius: 2,
+        letterSpacing: 0.4,
+    }}
+/>
                                             </Tooltip>
                                         </TableCell>
 
                                         <TableCell>
-                                            <Typography variant="body2">
-                                                {formatTimestamp(timestamp)}
-                                            </Typography>
+                                        <Box>
+
+<Typography
+fontWeight={600}
+>
+{new Date(timestamp).toLocaleDateString()}
+</Typography>
+
+<Typography
+variant="body2"
+color="text.secondary"
+>
+{new Date(timestamp).toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit",
+})}
+</Typography>
+
+</Box>
                                         </TableCell>
 
                                         <TableCell>

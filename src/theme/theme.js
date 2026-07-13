@@ -7,7 +7,7 @@ export function createAppTheme(mode = "light") {
             mode,
 
             primary: {
-                main: "#5B5BD6",
+                main: "#007FFF",
             },
 
             background: {

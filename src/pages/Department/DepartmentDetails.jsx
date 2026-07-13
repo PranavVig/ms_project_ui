@@ -122,25 +122,64 @@ function DepartmentDetails() {
 
         <Box>
 
-            <Button
-                startIcon={<ArrowBackIcon />}
-                onClick={() => navigate("/departments")}
-                sx={{ mb: 2 }}
-            >
-                Back to Departments
-            </Button>
+<Paper
+    sx={{
+        mb: 4,
+        p: 4,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexWrap: "wrap",
+        gap: 3,
+    }}
+>
 
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
-                {department.deptName}
-            </Typography>
+    <Box>
 
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
-                Department details and assigned employees.
-            </Typography>
+        <Typography
+            variant="overline"
+            color="primary"
+            sx={{
+                fontWeight: 700,
+                letterSpacing: 2,
+            }}
+        >
+            DEPARTMENT DETAILS
+        </Typography>
 
+        <Typography
+            variant="h3"
+            sx={{
+                mt: 0.5,
+                fontWeight: 700,
+            }}
+        >
+            {department.deptName}
+        </Typography>
+
+        <Typography
+            color="text.secondary"
+            sx={{
+                mt: 1,
+            }}
+        >
+            Department information, activity and assigned employees.
+        </Typography>
+
+    </Box>
+
+    <Button
+        variant="outlined"
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate("/departments")}
+    >
+        Back
+    </Button>
+
+</Paper>
             <Grid container spacing={3} sx={{ mb: 4 }}>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <Paper elevation={2} sx={{ p: 2.5, borderRadius: 3 }}>
+                    <Paper elevation={4} sx={{ p: 2.5, borderRadius: 1.5 }}>
                         <Typography variant="body2" color="text.secondary">
                             Employee Count
                         </Typography>
@@ -150,7 +189,7 @@ function DepartmentDetails() {
                     </Paper>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <Paper elevation={2} sx={{ p: 2.5, borderRadius: 3 }}>
+                    <Paper elevation={4} sx={{ p: 2, borderRadius: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                             Created
                         </Typography>
@@ -160,7 +199,7 @@ function DepartmentDetails() {
                     </Paper>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                    <Paper elevation={2} sx={{ p: 2.5, borderRadius: 3 }}>
+                    <Paper elevation={4} sx={{ p: 2, borderRadius: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                             Updated
                         </Typography>
@@ -171,14 +210,35 @@ function DepartmentDetails() {
                 </Grid>
             </Grid>
 
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-                Employees
-            </Typography>
+            <Typography
+    variant="h5"
+    fontWeight={700}
+    sx={{
+        mb: 3,
+        textAlign: 'center',
+        mr: '98px', // Pushes it 50px to the right. Use 'mr' to push left.
+    }}
+>
+     Assigned Employees
+</Typography>
 
-            <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3 }}>
+            <TableContainer
+    component={Paper}
+    elevation={0}
+    sx={{
+        borderRadius: 2,
+        border: "1px solid",
+        borderColor: "divider",
+        overflow: "hidden",
+    }}
+>
                 <Table>
                     <TableHead>
-                        <TableRow>
+                    <TableRow
+    sx={{
+        bgcolor: "action.hover",
+    }}
+>
                             <TableCell sx={{ fontWeight: "bold" }}>Employee Name</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Joining Date</TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
@@ -195,16 +255,33 @@ function DepartmentDetails() {
                             <TableRow>
                                 <TableCell colSpan={3} align="center" sx={{ py: 6 }}>
                                     <PersonOutlineOutlinedIcon
-                                        sx={{ fontSize: 40, color: "text.disabled", mb: 1 }}
+                                        sx={{ fontSize: 52, color: "text.disabled", mb: 1 }}
                                     />
-                                    <Typography color="text.secondary">
+                                   <Typography
+    variant="h6"
+    color="text.secondary"
+>
                                         No employees in this department.
                                     </Typography>
                                 </TableCell>
                             </TableRow>
                         ) : (
                             employees.map((emp) => (
-                                <TableRow key={emp.empId} hover>
+                                <TableRow
+                                key={emp.empId}
+                                hover
+                                sx={{
+                                    transition: "background-color .2s ease",
+                            
+                                    "& td": {
+                                        py: 2,
+                                    },
+                            
+                                    "&:hover": {
+                                        bgcolor: "action.hover",
+                                    },
+                                }}
+                            >
                                     <TableCell>{emp.empName}</TableCell>
                                     <TableCell>{emp.empJoiningDate}</TableCell>
                                     <TableCell>{emp.address}</TableCell>

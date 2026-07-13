@@ -36,9 +36,23 @@ function AppRoutes() {
 
                         <Route path="/employees" element={<Employee />} />
 
-                        <Route path="/department/audit" element={<DepartmentAuditPage />} />
+                        <Route
+    element={
+        <ProtectedRoute
+            allowedRoles={["ROLE_MANAGER", "ROLE_ADMIN"]}
+        />
+    }
+>
+    <Route
+        path="/department/audit"
+        element={<DepartmentAuditPage />}
+    />
 
-                        <Route path="/emp/audit" element={<EmployeeAuditPage />} />
+    <Route
+        path="/emp/audit"
+        element={<EmployeeAuditPage />}
+    />
+</Route>
 
                     </Route>
 

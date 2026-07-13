@@ -38,6 +38,8 @@ const PAGE_SIZE = 10;
 function Department() {
 
     const navigate = useNavigate();
+    const role = localStorage.getItem("role");
+    const isAdmin = role === "ROLE_ADMIN";
 
     const [departments, setDepartments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -380,7 +382,7 @@ function Department() {
         </Typography>
 
     </Box>
-
+    {isAdmin && (
     <Button
         variant="contained"
         startIcon={<AddIcon />}
@@ -388,6 +390,7 @@ function Department() {
     >
         Add Department
     </Button>
+)}
 
 </Paper>
 
@@ -502,31 +505,36 @@ function Department() {
                                 >
                                     <TableCell>{dept.deptName}</TableCell>
                                     <TableCell align="right">
-                                        <Tooltip title="Edit">
-                                        <IconButton
-    size="small"
-    sx={{
-        borderRadius: 2,
-        mr: 0.5,
-    }}
-                                                onClick={(e) => handleOpenEditDialog(dept, e)}
-                                            >
-                                                <EditOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Delete">
-                                        <IconButton
-    size="small"
-    color="error"
-    sx={{
-        borderRadius: 2,
-    }}
-                                                onClick={(e) => handleOpenDeleteDialog(dept, e)}
-                                            >
-                                                <DeleteOutlineOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
+    {isAdmin && (
+        <>
+            <Tooltip title="Edit">
+                <IconButton
+                    size="small"
+                    sx={{
+                        borderRadius: 2,
+                        mr: 0.5,
+                    }}
+                    onClick={(e) => handleOpenEditDialog(dept, e)}
+                >
+                    <EditOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Delete">
+                <IconButton
+                    size="small"
+                    color="error"
+                    sx={{
+                        borderRadius: 2,
+                    }}
+                    onClick={(e) => handleOpenDeleteDialog(dept, e)}
+                >
+                    <DeleteOutlineOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+        </>
+    )}
+</TableCell>
                                 </TableRow>
                             ))
                         )}

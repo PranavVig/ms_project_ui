@@ -49,6 +49,8 @@ const emptyForm = {
 function Employee() {
 
     const [searchParams, setSearchParams] = useSearchParams();
+    const role = localStorage.getItem("role");
+    const isAdmin = role === "ROLE_ADMIN";
 
     const [employees, setEmployees] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -472,6 +474,7 @@ function Employee() {
 
     </Box>
 
+    {isAdmin && (
     <Button
         variant="contained"
         startIcon={<AddIcon />}
@@ -479,7 +482,7 @@ function Employee() {
     >
         Add Employee
     </Button>
-
+)}
 </Paper>
 
             <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
@@ -598,24 +601,29 @@ function Employee() {
                                     <TableCell>{emp.empJoiningDate}</TableCell>
                                     <TableCell>{emp.address}</TableCell>
                                     <TableCell align="right">
-                                        <Tooltip title="Edit">
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => handleOpenEditDialog(emp)}
-                                            >
-                                                <EditOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Delete">
-                                            <IconButton
-                                                size="small"
-                                                color="error"
-                                                onClick={() => handleOpenDeleteDialog(emp)}
-                                            >
-                                                <DeleteOutlineOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
+    {isAdmin && (
+        <>
+            <Tooltip title="Edit">
+                <IconButton
+                    size="small"
+                    onClick={() => handleOpenEditDialog(emp)}
+                >
+                    <EditOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Delete">
+                <IconButton
+                    size="small"
+                    color="error"
+                    onClick={() => handleOpenDeleteDialog(emp)}
+                >
+                    <DeleteOutlineOutlinedIcon fontSize="small" />
+                </IconButton>
+            </Tooltip>
+        </>
+    )}
+</TableCell>
                                 </TableRow>
                             ))
                         )}

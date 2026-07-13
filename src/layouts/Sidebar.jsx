@@ -28,6 +28,7 @@ function Sidebar() {
 
     const navigate = useNavigate();
     const location = useLocation();
+    const role = localStorage.getItem("role");
 
     const [auditOpen, setAuditOpen] = useState(
         location.pathname.startsWith("/department/audit") ||
@@ -36,6 +37,8 @@ function Sidebar() {
 
     function handleLogout() {
         localStorage.removeItem("auth");
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
         navigate("/login");
     }
 
@@ -148,84 +151,88 @@ function Sidebar() {
                     <ListItemText primary="Employees" />
                 </ListItemButton>
 
-                <Typography
-                    variant="caption"
-                    sx={{
-                        px: 3,
-                        mt: 2,
-                        mb: 1,
-                        display: "block",
-                        color: "text.secondary",
-                        fontWeight: 700,
-                        letterSpacing: 1,
-                    }}
-                >
-                    MONITORING
-                </Typography>
+                {role !== "ROLE_EMPLOYEE" && (
+    <>
+        <Typography
+            variant="caption"
+            sx={{
+                px: 3,
+                mt: 2,
+                mb: 1,
+                display: "block",
+                color: "text.secondary",
+                fontWeight: 700,
+                letterSpacing: 1,
+            }}
+        >
+            MONITORING
+        </Typography>
+
+        <ListItemButton
+            onClick={() => setAuditOpen((prev) => !prev)}
+            selected={
+                isActive("/department/audit") ||
+                isActive("/emp/audit")
+            }
+            sx={itemStyle(
+                isActive("/department/audit") ||
+                isActive("/emp/audit")
+            )}
+        >
+            <ListItemIcon>
+                <ClipboardList size={18} />
+            </ListItemIcon>
+
+            <ListItemText primary="Audit Logs" />
+
+            {auditOpen ? (
+                <ChevronUp size={18} />
+            ) : (
+                <ChevronDown size={18} />
+            )}
+        </ListItemButton>
+
+        <Collapse in={auditOpen} timeout="auto">
+
+            <List disablePadding>
 
                 <ListItemButton
-                    onClick={() => setAuditOpen((prev) => !prev)}
-                    selected={
-                        isActive("/department/audit") ||
-                        isActive("/emp/audit")
-                    }
-                    sx={itemStyle(
-                        isActive("/department/audit") ||
-                        isActive("/emp/audit")
-                    )}
+                    component={Link}
+                    to="/department/audit"
+                    selected={isActive("/department/audit")}
+                    sx={{
+                        ...itemStyle(isActive("/department/audit")),
+                        pl: 5,
+                    }}
                 >
                     <ListItemIcon>
-                        <ClipboardList size={18} />
+                        <Building size={17} />
                     </ListItemIcon>
 
-                    <ListItemText primary="Audit Logs" />
-
-                    {auditOpen ? (
-                        <ChevronUp size={18} />
-                    ) : (
-                        <ChevronDown size={18} />
-                    )}
+                    <ListItemText primary="Department Audit" />
                 </ListItemButton>
 
-                <Collapse in={auditOpen} timeout="auto">
+                <ListItemButton
+                    component={Link}
+                    to="/emp/audit"
+                    selected={isActive("/emp/audit")}
+                    sx={{
+                        ...itemStyle(isActive("/emp/audit")),
+                        pl: 5,
+                    }}
+                >
+                    <ListItemIcon>
+                        <UserSearch size={17} />
+                    </ListItemIcon>
 
-                    <List disablePadding>
+                    <ListItemText primary="Employee Audit" />
+                </ListItemButton>
 
-                        <ListItemButton
-                            component={Link}
-                            to="/department/audit"
-                            selected={isActive("/department/audit")}
-                            sx={{
-                                ...itemStyle(isActive("/department/audit")),
-                                pl: 5,
-                            }}
-                        >
-                            <ListItemIcon>
-                                <Building size={17} />
-                            </ListItemIcon>
+            </List>
 
-                            <ListItemText primary="Department Audit" />
-                        </ListItemButton>
-
-                        <ListItemButton
-                            component={Link}
-                            to="/emp/audit"
-                            selected={isActive("/emp/audit")}
-                            sx={{
-                                ...itemStyle(isActive("/emp/audit")),
-                                pl: 5,
-                            }}
-                        >
-                            <ListItemIcon>
-                                <UserSearch size={17} />
-                            </ListItemIcon>
-
-                            <ListItemText primary="Employee Audit" />
-                        </ListItemButton>
-
-                    </List>
-
-                </Collapse>
+        </Collapse>
+    </>
+)}
 
             </List>
 

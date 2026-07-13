@@ -22,6 +22,7 @@ import api from "../../services/api";
 function Dashboard() {
 
     const navigate = useNavigate();
+    const role = localStorage.getItem("role");
 
     const [deptCount, setDeptCount] = useState(0);
     const [empCount, setEmpCount] = useState(0);
@@ -297,58 +298,59 @@ p: 3,
                     >
                         Access the most frequently used management modules.
                     </Typography>
-
                     <Grid container spacing={2}>
 
-                        <Grid size={{ xs: 12, md: 4 }}>
+    <Grid size={{ xs: 12, md: 4 }}>
 
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                endIcon={<ArrowRight size={18} />}
-                                onClick={() => navigate("/departments")}
-                                sx={{
-                                    py: 1.3,
-                                }}
-                            >
-                                Manage Departments
-                            </Button>
+        <Button
+            fullWidth
+            variant="contained"
+            endIcon={<ArrowRight size={18} />}
+            onClick={() => navigate("/departments")}
+            sx={{
+                py: 1.3,
+            }}
+        >
+            Manage Departments
+        </Button>
 
-                        </Grid>
+    </Grid>
 
-                        <Grid size={{ xs: 12, md: 4 }}>
+    <Grid size={{ xs: 12, md: 4 }}>
 
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                endIcon={<ArrowRight size={18} />}
-                                onClick={() => navigate("/employees")}
-                                sx={{
-                                    py: 1.3,
-                                }}
-                            >
-                                Manage Employees
-                            </Button>
+        <Button
+            fullWidth
+            variant="outlined"
+            endIcon={<ArrowRight size={18} />}
+            onClick={() => navigate("/employees")}
+            sx={{
+                py: 1.3,
+            }}
+        >
+            Manage Employees
+        </Button>
 
-                        </Grid>
+    </Grid>
 
-                        <Grid size={{ xs: 12, md: 4 }}>
+    {role !== "ROLE_EMPLOYEE" && (
+        <Grid size={{ xs: 12, md: 4 }}>
 
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                endIcon={<ArrowRight size={18} />}
-                                onClick={() => navigate("/department/audit")}
-                                sx={{
-                                    py: 1.3,
-                                }}
-                            >
-                                View Audit Logs
-                            </Button>
+            <Button
+                fullWidth
+                variant="outlined"
+                endIcon={<ArrowRight size={18} />}
+                onClick={() => navigate("/department/audit")}
+                sx={{
+                    py: 1.3,
+                }}
+            >
+                View Audit Logs
+            </Button>
 
-                        </Grid>
+        </Grid>
+    )}
 
-                    </Grid>
+</Grid>
 
                 </Paper>
                 </Box>

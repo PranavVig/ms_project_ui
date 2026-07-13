@@ -60,13 +60,30 @@ function renderValue(val) {
 }
 
 function FieldDiff({ oldData, newData, action, rawRecord }) {
-    const keys = Array.from(
-        new Set([
-            ...Object.keys(oldData || {}),
-            ...Object.keys(newData || {})
-        ])
-    ).filter((k) => !HIDDEN_KEYS.has(k));
+    let keys = [];
 
+if (action === "UPDATE") {
+
+    keys = Object.keys({
+        ...oldData,
+        ...newData,
+    })
+        .filter((key) => key.startsWith("old"))
+        .filter((key) => !HIDDEN_KEYS.has(key));
+
+} else if (action === "CREATE") {
+
+    keys = Object.keys(newData || {})
+        .filter((key) => key.startsWith("new"))
+        .filter((key) => !HIDDEN_KEYS.has(key));
+
+} else if (action === "DELETE") {
+
+    keys = Object.keys(oldData || {})
+        .filter((key) => key.startsWith("old"))
+        .filter((key) => !HIDDEN_KEYS.has(key));
+
+}
     if (keys.length === 0) {
         return (
             <Box>
@@ -80,14 +97,47 @@ function FieldDiff({ oldData, newData, action, rawRecord }) {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
-            {keys.map((key) => {
-                const oldVal = oldData?.[key];
-                const newVal = newData?.[key];
-                const changed = action === "UPDATE" && String(oldVal ?? "") !== String(newVal ?? "");
+{keys.map((key) => {
 
+let label;
+let oldVal;
+let newVal;
+
+if (action === "UPDATE") {
+
+    const suffix = key.substring(3);
+
+    label = suffix.replace(/([A-Z])/g, " $1").trim();
+
+    oldVal = oldData?.[key];
+    newVal = newData?.["new" + suffix];
+
+} else if (action === "CREATE") {
+
+    const suffix = key.substring(3);
+
+    label = suffix.replace(/([A-Z])/g, " $1").trim();
+
+    oldVal = null;
+    newVal = newData?.[key];
+
+} else {
+
+    const suffix = key.substring(3);
+
+    label = suffix.replace(/([A-Z])/g, " $1").trim();
+
+    oldVal = oldData?.[key];
+    newVal = null;
+
+}
+
+const changed =
+    action !== "UPDATE" ||
+    String(oldVal ?? "") !== String(newVal ?? "");
                 return (
                     <Box
-                        key={key}
+                        key={label}
                         sx={{
                             display: "flex",
                             alignItems: "center",
@@ -104,7 +154,7 @@ function FieldDiff({ oldData, newData, action, rawRecord }) {
                                 textTransform: "capitalize"
                             }}
                         >
-                            {key.replace(/([A-Z])/g, " $1").trim()}
+                            {label}
                         </Typography>
 
                         {action === "CREATE" && (
@@ -225,6 +275,24 @@ function EmployeeAuditPage() {
         let newData = parseJsonSafe(rawNew);
 
         if (!oldData && !newData) {
+            if (action.includes("UPD")) {
+
+                oldData = {};
+                newData = {};
+            
+                Object.keys(record).forEach((key) => {
+            
+                    if (key.startsWith("old")) {
+                        oldData[key] = record[key];
+                    }
+            
+                    if (key.startsWith("new")) {
+                        newData[key] = record[key];
+                    }
+            
+                });
+            
+            }
             const knownKeys = new Set(["action", "actionType", "operationType", "operation", "type", "eventType", "revType", "timestamp", "createdAt", "auditTimestamp", "changedAt", "modifiedAt", "dateTime", "date", "time", "createdDate", "revtstmp", "performedBy", "changedBy", "modifiedBy", "updatedBy", "username", "user", "actor", "auditId", "id", "audit_id", "rev"]);
             const flatData = {};
             for (const k in record) {
@@ -256,15 +324,53 @@ function EmployeeAuditPage() {
     return (
         <Box>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 0.5 }}>
-                <AssignmentOutlinedIcon color="action" />
-                <Typography variant="h4" fontWeight="bold">
+        <Paper
+            sx={{
+                mb: 4,
+                p: 4,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 3,
+            }}
+        >
+        
+            <Box>
+        
+                <Typography
+                    variant="overline"
+                    color="primary"
+                    sx={{
+                        fontWeight: 700,
+                        letterSpacing: 2,
+                    }}
+                >
+                    AUDIT LOGS
+                </Typography>
+        
+                <Typography
+                    variant="h3"
+                    sx={{
+                        mt: 0.5,
+                        fontWeight: 700,
+                    }}
+                >
                     Employee Audit
                 </Typography>
+        
+                <Typography
+                    color="text.secondary"
+                    sx={{
+                        mt: 1,
+                        maxWidth: 560,
+                    }}
+                >
+                    Track every employee creation, update and deletion across the system.
+                </Typography>
+        
             </Box>
-            <Typography color="text.secondary" sx={{ mb: 3 }}>
-                Track all create, update, and delete operations on employees.
-            </Typography>
+            </Paper>
 
             {error && (
                 <Alert severity="error" sx={{ mb: 3 }}>

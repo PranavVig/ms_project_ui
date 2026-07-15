@@ -279,23 +279,9 @@ function Login() {
         width: "100%",
     }}
 >
-
-    <Typography fontWeight={600}>
-        {snackbarMessage}
-    </Typography>
-
-    {countdownActive && (
-        <Typography
-            sx={{
-                mt: 1,
-                fontSize: 18,
-                fontWeight: 700,
-            }}
-        >
-            {formatTime(remainingSeconds)}
-        </Typography>
-    )}
-
+    {countdownActive
+        ? `Account locked • Try again in ${formatTime(remainingSeconds)}`
+        : snackbarMessage}
 </Alert>
             </Snackbar>
 

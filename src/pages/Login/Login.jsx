@@ -9,7 +9,7 @@ import {
     Typography
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import api from "../../services/api";
 import loginBg from "../../assets/final-login.png";
@@ -25,6 +25,53 @@ function Login() {
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [severity, setSeverity] = useState("error");
 
+    const [remainingSeconds, setRemainingSeconds] = useState(0);
+    const [countdownActive, setCountdownActive] = useState(false);
+    const [countdownFinished, setCountdownFinished] = useState(false);
+
+    useEffect(() => {
+
+        if (!countdownActive) {
+            return;
+        }
+    
+        const interval = setInterval(() => {
+    
+            setRemainingSeconds(prev => {
+    
+                if (prev <= 1) {
+    
+                    clearInterval(interval);
+    
+                    setCountdownActive(false);
+    
+                    setCountdownFinished(true);
+    
+                    setSnackbarMessage("You can now try logging in again.");
+    
+                    setSeverity("success");
+    
+                    setTimeout(() => {
+    
+                        setOpenSnackbar(false);
+    
+                        setCountdownFinished(false);
+    
+                    }, 5000);
+    
+                    return 0;
+    
+                }
+    
+                return prev - 1;
+    
+            });
+    
+        }, 1000);
+    
+        return () => clearInterval(interval);
+    
+    }, [countdownActive]);
     async function handleLogin() {
 
         if (!username.trim() || !password.trim()) {
@@ -54,17 +101,51 @@ function Login() {
             navigate("/dashboard");
         
         } catch {
-        
+
             localStorage.removeItem("auth");
             localStorage.removeItem("username");
             localStorage.removeItem("role");
+        
+            try {
+        
+                const response = await fetch(
+                    `${import.meta.env.VITE_API_BASE_URL}/auth/lock-status?username=${encodeURIComponent(username)}`
+                );
+        
+                const lockStatus = await response.json();
+        
+                if (lockStatus.locked) {
+        
+                    setRemainingSeconds(lockStatus.remainingSeconds);
+                    setCountdownActive(true);
+        
+                    setSeverity("error");
+                    setSnackbarMessage("Account locked.");
+                    setOpenSnackbar(true);
+        
+                    return;
+        
+                }
+        
+            } catch (error) {
+        
+                console.error(error);
+        
+            }
         
             setSeverity("error");
             setSnackbarMessage("Invalid username or password.");
             setOpenSnackbar(true);
         
         }
+    }
+    function formatTime(seconds) {
 
+        const minutes = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+    
+        return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    
     }
 
     return (
@@ -190,16 +271,32 @@ function Login() {
                     horizontal: "center",
                 }}
             >
-                <Alert
-                    severity={severity}
-                    variant="filled"
-                    onClose={() => setOpenSnackbar(false)}
-                    sx={{
-                        width: "100%",
-                    }}
-                >
-                    {snackbarMessage}
-                </Alert>
+<Alert
+    severity={severity}
+    variant="filled"
+    onClose={() => setOpenSnackbar(false)}
+    sx={{
+        width: "100%",
+    }}
+>
+
+    <Typography fontWeight={600}>
+        {snackbarMessage}
+    </Typography>
+
+    {countdownActive && (
+        <Typography
+            sx={{
+                mt: 1,
+                fontSize: 18,
+                fontWeight: 700,
+            }}
+        >
+            {formatTime(remainingSeconds)}
+        </Typography>
+    )}
+
+</Alert>
             </Snackbar>
 
         </Box>

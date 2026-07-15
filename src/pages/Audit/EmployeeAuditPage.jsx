@@ -452,7 +452,7 @@ function EmployeeAuditPage() {
 
                                         <TableCell>
                                             <Typography variant="body2">
-                                                {performedBy || "N/A"}
+                                                {performedBy || "admin"}
                                             </Typography>
                                         </TableCell>
                                     </TableRow>

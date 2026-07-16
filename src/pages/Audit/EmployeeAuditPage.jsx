@@ -13,11 +13,16 @@ import {
     TableHead,
     TableRow,
     Tooltip,
-    Typography
+    Typography,
+    Button,
+    Menu,
+    MenuItem,
+    Snackbar
 } from "@mui/material";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import api from "../../services/api";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const PAGE_SIZE = 10;
 
@@ -222,6 +227,15 @@ function EmployeeAuditPage() {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
 
+    const [downloadAnchor, setDownloadAnchor] = useState(null);
+    const role = localStorage.getItem("role");
+
+    const [downloading, setDownloading] = useState(false);
+
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [severity, setSeverity] = useState("success");
+
     useEffect(() => {
         fetchAudit();
     }, [page]);
@@ -259,6 +273,69 @@ function EmployeeAuditPage() {
 
     function handlePageChange(_event, newPage) {
         setPage(newPage - 1);
+    }
+
+    function openDownloadMenu(event) {
+        setDownloadAnchor(event.currentTarget);
+    }
+    
+    function closeDownloadMenu() {
+        setDownloadAnchor(null);
+    }
+    
+    async function downloadAudit(format) {
+
+        try {
+    
+            setDownloading(true);
+    
+            const response = await api.get(
+                `/emp/audit/export?format=${format}`,
+                {
+                    responseType: "blob",
+                }
+            );
+    
+            const blob = new Blob([response.data]);
+    
+            const url = window.URL.createObjectURL(blob);
+    
+            const link = document.createElement("a");
+    
+            link.href = url;
+    
+            link.download =
+                format === "csv"
+                    ? "employee_audit.csv"
+                    : "employee_audit.xlsx";
+    
+            document.body.appendChild(link);
+    
+            link.click();
+    
+            link.remove();
+    
+            window.URL.revokeObjectURL(url);
+    
+            closeDownloadMenu();
+    
+            setSeverity("success");
+            setSnackbarMessage("Employee audit downloaded successfully.");
+            setOpenSnackbar(true);
+    
+        } catch (error) {
+    
+            console.error(error);
+    
+            setSeverity("error");
+            setSnackbarMessage("Failed to download audit report.");
+            setOpenSnackbar(true);
+    
+        } finally {
+    
+            setDownloading(false);
+    
+        }
     }
 
     function extractRecord(record) {
@@ -370,6 +447,33 @@ function EmployeeAuditPage() {
                 </Typography>
         
             </Box>
+
+            {(role === "ROLE_ADMIN" || role === "ROLE_MANAGER") && (
+    <>
+        <Button
+    variant="contained"
+    startIcon={<DownloadIcon />}
+    onClick={openDownloadMenu}
+    disabled={downloading}
+>
+    {downloading ? "Downloading..." : "Download"}
+</Button>
+
+        <Menu
+            anchorEl={downloadAnchor}
+            open={Boolean(downloadAnchor)}
+            onClose={closeDownloadMenu}
+        >
+            <MenuItem onClick={() => downloadAudit("csv")}>
+                CSV (.csv)
+            </MenuItem>
+
+            <MenuItem onClick={() => downloadAudit("xlsx")}>
+                Excel (.xlsx)
+            </MenuItem>
+        </Menu>
+    </>
+)}
             </Paper>
 
             {error && (
@@ -473,7 +577,23 @@ function EmployeeAuditPage() {
                     />
                 </Box>
             )}
-
+<Snackbar
+    open={openSnackbar}
+    autoHideDuration={3000}
+    onClose={() => setOpenSnackbar(false)}
+    anchorOrigin={{
+        vertical: "top",
+        horizontal: "center",
+    }}
+>
+    <Alert
+        severity={severity}
+        variant="filled"
+        onClose={() => setOpenSnackbar(false)}
+    >
+        {snackbarMessage}
+    </Alert>
+</Snackbar>
         </Box>
     );
 

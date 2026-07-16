@@ -28,8 +28,7 @@ function Login() {
     const [remainingSeconds, setRemainingSeconds] = useState(0);
     const [countdownActive, setCountdownActive] = useState(false);
     const [countdownFinished, setCountdownFinished] = useState(false);
-
-    useEffect(() => {
+useEffect(() => {
 
         if (!countdownActive) {
             return;
@@ -52,11 +51,13 @@ function Login() {
                     setSeverity("success");
     
                     setTimeout(() => {
-    
-                        setOpenSnackbar(false);
-    
+
+                        setCountdownActive(false);
+                        setRemainingSeconds(0);
                         setCountdownFinished(false);
-    
+                    
+                        setOpenSnackbar(false);
+                    
                     }, 5000);
     
                     return 0;
@@ -97,7 +98,11 @@ function Login() {
         
             localStorage.setItem("username", response.data.username);
             localStorage.setItem("role", response.data.role);
-        
+
+            setCountdownActive(false);
+            setRemainingSeconds(0);
+            setCountdownFinished(false);
+
             navigate("/dashboard");
         
         } catch {
@@ -133,9 +138,13 @@ function Login() {
         
             }
         
-            setSeverity("error");
-            setSnackbarMessage("Invalid username or password.");
-            setOpenSnackbar(true);
+setCountdownActive(false);
+setRemainingSeconds(0);
+setCountdownFinished(false);
+
+setSeverity("error");
+setSnackbarMessage("Invalid username or password.");
+setOpenSnackbar(true);
         
         }
     }
@@ -228,7 +237,13 @@ function Login() {
                             fullWidth
                             label="Username"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => {
+                                setUsername(e.target.value);
+                            
+                                setCountdownActive(false);
+                                setRemainingSeconds(0);
+                                setCountdownFinished(false);
+                            }}
                             sx={{
                                 mb: 2,
                             }}
@@ -239,7 +254,13 @@ function Login() {
                             label="Password"
                             type="password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                            
+                                setCountdownActive(false);
+                                setRemainingSeconds(0);
+                                setCountdownFinished(false);
+                            }}
                         />
 
                         <Button
@@ -264,7 +285,7 @@ function Login() {
 
             <Snackbar
                 open={openSnackbar}
-                autoHideDuration={3000}
+               
                 onClose={() => setOpenSnackbar(false)}
                 anchorOrigin={{
                     vertical: "top",
@@ -280,7 +301,7 @@ function Login() {
     }}
 >
     {countdownActive
-        ? `Account locked • Try again in ${formatTime(remainingSeconds)}`
+        ? `Account locked. Try again in ${formatTime(remainingSeconds)}`
         : snackbarMessage}
 </Alert>
             </Snackbar>

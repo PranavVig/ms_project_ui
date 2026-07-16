@@ -330,7 +330,7 @@ function Department() {
 
     }
 
-    const columnCount = 2;
+    const columnCount = isAdmin ? 2 : 1;
 
     return (
 
@@ -447,9 +447,14 @@ function Department() {
                                     Department Name
                                 </TableSortLabel>
                             </TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="right">
-                                Actions
-                            </TableCell>
+                            {isAdmin && (
+    <TableCell
+        sx={{ fontWeight: "bold" }}
+        align="right"
+    >
+        Actions
+    </TableCell>
+)}
                         </TableRow>
                     </TableHead>
 
@@ -504,37 +509,35 @@ function Department() {
                                     onClick={() => handleRowClick(dept.deptId)}
                                 >
                                     <TableCell>{dept.deptName}</TableCell>
-                                    <TableCell align="right">
-    {isAdmin && (
-        <>
-            <Tooltip title="Edit">
-                <IconButton
-                    size="small"
-                    sx={{
-                        borderRadius: 2,
-                        mr: 0.5,
-                    }}
-                    onClick={(e) => handleOpenEditDialog(dept, e)}
-                >
-                    <EditOutlinedIcon fontSize="small" />
-                </IconButton>
-            </Tooltip>
+                                    {isAdmin && (
+    <TableCell align="right">
+        <Tooltip title="Edit">
+            <IconButton
+                size="small"
+                sx={{
+                    borderRadius: 2,
+                    mr: 0.5,
+                }}
+                onClick={(e) => handleOpenEditDialog(dept, e)}
+            >
+                <EditOutlinedIcon fontSize="small" />
+            </IconButton>
+        </Tooltip>
 
-            <Tooltip title="Delete">
-                <IconButton
-                    size="small"
-                    color="error"
-                    sx={{
-                        borderRadius: 2,
-                    }}
-                    onClick={(e) => handleOpenDeleteDialog(dept, e)}
-                >
-                    <DeleteOutlineOutlinedIcon fontSize="small" />
-                </IconButton>
-            </Tooltip>
-        </>
-    )}
-</TableCell>
+        <Tooltip title="Delete">
+            <IconButton
+                size="small"
+                color="error"
+                sx={{
+                    borderRadius: 2,
+                }}
+                onClick={(e) => handleOpenDeleteDialog(dept, e)}
+            >
+                <DeleteOutlineOutlinedIcon fontSize="small" />
+            </IconButton>
+        </Tooltip>
+    </TableCell>
+)}
                                 </TableRow>
                             ))
                         )}

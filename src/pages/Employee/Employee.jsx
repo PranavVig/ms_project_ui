@@ -421,7 +421,7 @@ function Employee() {
 
     }
 
-    const columnCount = 4;
+    const columnCount = isAdmin ? 5:4;
 
     return (
 
@@ -550,9 +550,14 @@ function Employee() {
                                 </TableSortLabel>
                             </TableCell>
                             <TableCell sx={{ fontWeight: "bold" }}>Address</TableCell>
-                            <TableCell sx={{ fontWeight: "bold" }} align="right">
-                                Actions
-                            </TableCell>
+                            {isAdmin && (
+    <TableCell
+        sx={{ fontWeight: "bold" }}
+        align="right"
+    >
+        Actions
+    </TableCell>
+)}
                         </TableRow>
                     </TableHead>
 
@@ -600,30 +605,30 @@ function Employee() {
                                     <TableCell>{emp.departmentName}</TableCell>
                                     <TableCell>{emp.empJoiningDate}</TableCell>
                                     <TableCell>{emp.address}</TableCell>
-                                    <TableCell align="right">
-    {isAdmin && (
-        <>
-            <Tooltip title="Edit">
-                <IconButton
-                    size="small"
-                    onClick={() => handleOpenEditDialog(emp)}
-                >
-                    <EditOutlinedIcon fontSize="small" />
-                </IconButton>
-            </Tooltip>
+                                    {isAdmin && (
+    <TableCell align="right">
 
-            <Tooltip title="Delete">
-                <IconButton
-                    size="small"
-                    color="error"
-                    onClick={() => handleOpenDeleteDialog(emp)}
-                >
-                    <DeleteOutlineOutlinedIcon fontSize="small" />
-                </IconButton>
-            </Tooltip>
-        </>
-    )}
-</TableCell>
+        <Tooltip title="Edit">
+            <IconButton
+                size="small"
+                onClick={() => handleOpenEditDialog(emp)}
+            >
+                <EditOutlinedIcon fontSize="small" />
+            </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Delete">
+            <IconButton
+                size="small"
+                color="error"
+                onClick={() => handleOpenDeleteDialog(emp)}
+            >
+                <DeleteOutlineOutlinedIcon fontSize="small" />
+            </IconButton>
+        </Tooltip>
+
+    </TableCell>
+)}
                                 </TableRow>
                             ))
                         )}
